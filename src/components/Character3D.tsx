@@ -69,8 +69,7 @@ function CharacterModel({ job, hidden }: { job: Job; hidden: Set<BodyPart> }) {
   const show = (p: BodyPart) => !hidden.has(p);
 
   return (
-    <group position={[0, -0.18, 0]} scale={0.82}>
-      <group ref={group}>
+    <group ref={group} position={[0, -0.2, 0]} scale={0.78}>
       {show("head") && (
         <>
           <mesh position={[0, 1.55, 0]} castShadow>
@@ -156,7 +155,6 @@ function CharacterModel({ job, hidden }: { job: Job; hidden: Set<BodyPart> }) {
           </mesh>
         </>
       )}
-      </group>
     </group>
   );
 }
@@ -172,7 +170,7 @@ export function Character3D({
 }) {
   return (
     <div style={{ height, width: "100%" }}>
-      <Canvas shadows camera={{ position: [0, 1.3, 4.2], fov: 40 }}>
+      <Canvas shadows orthographic camera={{ position: [0, 0.9, 5], zoom: 70 }}>
         <Suspense fallback={null}>
           <ambientLight intensity={0.6} />
           <directionalLight
@@ -187,8 +185,8 @@ export function Character3D({
           <Environment preset="city" />
           <OrbitControls
             enablePan={false}
-            minDistance={3}
-            maxDistance={8}
+            enableZoom={false}
+            target={[0, 0.65, 0]}
             minPolarAngle={Math.PI / 3}
             maxPolarAngle={Math.PI / 1.9}
           />
