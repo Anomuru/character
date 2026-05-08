@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Kasb Quest 3D — Kasbni Tanla, Kunni Yasha" },
+      { title: "Kasb Sarguzashti 3D — Kasbni Tanla, Kunni Yasha" },
       {
         name: "description",
         content:
@@ -75,7 +75,7 @@ function Index() {
           Rol O'ynash Simulyatsiyasi
         </Badge>
         <h1 className="text-5xl font-bold tracking-tight md:text-6xl">
-          Kasb <span className="text-primary">Quest</span> 3D
+          Kasb <span className="text-primary">Sarguzashti</span> 3D
         </h1>
         <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
           Xarakter profillarini ko'rib chiqing, to'g'ri ish asboblarini jihozlang va o'zingiz tanlagan har qanday kasbda bir kunni boshlang.
