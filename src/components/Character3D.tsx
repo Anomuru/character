@@ -170,7 +170,7 @@ export function Character3D({
 }) {
   return (
     <div style={{ height, width: "100%" }}>
-      <Canvas shadows camera={{ position: [0, 1.4, 3.8], fov: 40 }}>
+      <Canvas shadows camera={{ position: [0, 1.05, 5.2], fov: 34 }}>
         <Suspense fallback={null}>
           <ambientLight intensity={0.6} />
           <directionalLight
@@ -185,6 +185,7 @@ export function Character3D({
           <Environment preset="city" />
           <OrbitControls
             enablePan={false}
+            target={[0, 0.9, 0]}
             minDistance={2.5}
             maxDistance={6}
             minPolarAngle={Math.PI / 3}
