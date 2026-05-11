@@ -4,15 +4,39 @@ import { Suspense, useRef } from "react";
 import type { Group } from "three";
 import type { Job } from "@/lib/jobs";
 
-function Avatar({ url, accentColor }: { url: string; accentColor: string }) {
+function Avatar({
+  url,
+  accentColor,
+  damage,
+  failed,
+}: {
+  url: string;
+  accentColor: string;
+  damage: number;
+  failed: boolean;
+}) {
   const { scene } = useGLTF(url);
   const group = useRef<Group>(null);
+  const shake = useRef(0);
+  const lastDamage = useRef(damage);
 
-  useFrame((state) => {
+  useFrame((state, delta) => {
     if (!group.current) return;
     const t = state.clock.elapsedTime;
-    group.current.rotation.y = Math.sin(t * 0.5) * 0.25;
-    group.current.position.y = Math.sin(t * 1.5) * 0.02;
+
+    if (damage > lastDamage.current) {
+      shake.current = 0.55;
+      lastDamage.current = damage;
+    } else if (damage < lastDamage.current) {
+      lastDamage.current = damage;
+    }
+    shake.current = Math.max(0, shake.current - delta * 2.5);
+
+    const shakeOffset = Math.sin(t * 38) * shake.current * 0.12;
+    group.current.rotation.y = Math.sin(t * 0.5) * 0.25 + shakeOffset;
+    group.current.position.x = shakeOffset * 0.6;
+    group.current.position.y =
+      -0.95 + Math.sin(t * 1.5) * 0.02 + (failed ? -0.1 : 0);
   });
 
   return (
@@ -23,7 +47,17 @@ function Avatar({ url, accentColor }: { url: string; accentColor: string }) {
   );
 }
 
-export function CharacterGLB({ job, height = 360 }: { job: Job; height?: number | string }) {
+export function CharacterGLB({
+  job,
+  height = 360,
+  damage = 0,
+  failed = false,
+}: {
+  job: Job;
+  height?: number | string;
+  damage?: number;
+  failed?: boolean;
+}) {
   if (!job.modelUrl) return null;
 
   const cssHeight = typeof height === "number" ? `${height}px` : height;
@@ -40,7 +74,12 @@ export function CharacterGLB({ job, height = 360 }: { job: Job; height?: number 
             shadow-mapSize={[1024, 1024]}
           />
           <directionalLight position={[-3, 2, -2]} intensity={0.4} color={job.accentColor} />
-          <Avatar url={job.modelUrl} accentColor={job.accentColor} />
+          <Avatar
+            url={job.modelUrl}
+            accentColor={job.accentColor}
+            damage={damage}
+            failed={failed}
+          />
           <ContactShadows position={[0, -0.95, 0]} opacity={0.5} scale={5} blur={2.5} />
           <Environment preset="city" />
           <OrbitControls
