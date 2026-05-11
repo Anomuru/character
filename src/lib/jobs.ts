@@ -24,6 +24,9 @@ export type Job = {
   instruments: Instrument[];
   stats: { skill: number; speed: number; creativity: number };
   appearance: Appearance;
+  // Pre-rendered 3D illustration shown on the selection grid and profile.
+  // PNG path under /public. Leave undefined to fall back to procedural Character3D.
+  imageUrl?: string;
   // Ready Player Me .glb URL. Create avatars at https://readyplayer.me
   // then paste the URL here (format: https://models.readyplayer.me/{id}.glb).
   // Leave undefined to fall back to the primitive 3D character.
@@ -33,6 +36,7 @@ export type Job = {
 export const JOBS: Job[] = [
   {
     id: "chef",
+    imageUrl: "/characters/chef.png",
     name: "Marko",
     title: "Oshpaz",
     tagline: "Ishtiyoq va aniqlik bilan tayyorlaydi",
@@ -62,6 +66,7 @@ export const JOBS: Job[] = [
   },
   {
     id: "doctor",
+    imageUrl: "/characters/doctor.png",
     name: "Doktor Lin",
     title: "Shifokor",
     tagline: "Barqaror qo'llar, o'tkir aql",
@@ -91,6 +96,7 @@ export const JOBS: Job[] = [
   },
   {
     id: "mechanic",
+    imageUrl: "/characters/mechanic.png",
     name: "Jaks",
     title: "Mexanik",
     tagline: "Agar buzilgan bo'lsa, Jaks tuzatadi",
@@ -120,6 +126,7 @@ export const JOBS: Job[] = [
   },
   {
     id: "builder",
+    imageUrl: "/characters/builder.png",
     name: "Sem",
     title: "Quruvchi",
     tagline: "Chizmalardan orzularni quradi",
@@ -149,6 +156,7 @@ export const JOBS: Job[] = [
   },
   {
     id: "scientist",
+    imageUrl: "/characters/scientist.png",
     name: "Doktor Vega",
     title: "Tadqiqotchi",
     tagline: "Qiziquvchanlik eng katta asbob",
@@ -179,6 +187,7 @@ export const JOBS: Job[] = [
   },
   {
     id: "programmer",
+    imageUrl: "/characters/programmer.png",
     name: "Aziz",
     title: "Dasturchi",
     tagline: "Kod yozish orqali kelajakni yaratadi",
@@ -208,6 +217,7 @@ export const JOBS: Job[] = [
   },
   {
     id: "teacher",
+    imageUrl: "/characters/teacher.png",
     name: "Dilnoza",
     title: "O'qituvchi",
     tagline: "Bilim ulashish orqali kelajakni yoritadi",
@@ -237,6 +247,7 @@ export const JOBS: Job[] = [
   },
   {
     id: "police",
+    imageUrl: "/characters/police.png",
     name: "Sardor",
     title: "Politsiyachi",
     tagline: "Tartib va xavfsizlikni saqlaydi",

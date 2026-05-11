@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import confetti from "canvas-confetti";
-import { playCorrect, playWhoosh, playChirp } from "@/lib/sounds";
+import { playBalloon, playWhoosh, playChirp } from "@/lib/sounds";
 
 // ---------- Parallax ----------
 // Writes --px and --py (range ~ -1..1) onto <html> so any element can react.
@@ -154,7 +154,7 @@ function HotAirBalloon() {
       ticks: 120,
     });
 
-    playCorrect();
+    playBalloon();
     setPoppedAt(Date.now());
   };
 

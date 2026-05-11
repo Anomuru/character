@@ -273,11 +273,13 @@ const VOWEL = {
 const SAMPLE_URLS = {
   correct: "/sounds/kids-yay.mp3",
   wrong: "/sounds/kids-aww.mp3",
+  balloon: "/sounds/balloon-pop.mp3",
 } as const;
 
 const samples: Record<keyof typeof SAMPLE_URLS, HTMLAudioElement | null> = {
   correct: null,
   wrong: null,
+  balloon: null,
 };
 
 function getSample(key: keyof typeof SAMPLE_URLS): HTMLAudioElement | null {
@@ -314,6 +316,16 @@ function playSample(key: keyof typeof SAMPLE_URLS): boolean {
 }
 
 // --- Public sound effects ------------------------------------------------
+
+export function playBalloon() {
+  if (playSample("balloon")) return;
+
+  // Fallback synth — quick cartoon "boing".
+  const c = getCtx();
+  if (!c) return;
+  if (c.state === "suspended") c.resume();
+  voiceGlide(c, 900, 320, 0, 0.28, { volume: 0.18, type: "triangle" });
+}
 
 export function playCorrect() {
   if (playSample("correct")) return;

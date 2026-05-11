@@ -162,6 +162,21 @@
   50% { transform: translateY(-8px) rotate(1deg); }
 }
 
+@keyframes character-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.character-float {
+  animation: character-bob 3.6s ease-in-out infinite;
+  transform-origin: center bottom;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .character-float { animation: none; }
+}
+
 @keyframes wiggle {
   0%, 100% { transform: rotate(-2deg); }
   50% { transform: rotate(2deg); }

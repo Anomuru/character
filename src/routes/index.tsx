@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { JOBS, type Job, type Instrument } from "@/lib/jobs";
 import { Character3D, type BodyPart } from "@/components/Character3D";
 import { CharacterGLB } from "@/components/CharacterGLB";
+import { CharacterImage } from "@/components/CharacterImage";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -292,7 +293,9 @@ function Index() {
               </div>
 
               <div className="relative overflow-hidden">
-                {hasAvatar ? (
+                {j.imageUrl ? (
+                  <CharacterImage job={j} height={280} />
+                ) : hasAvatar ? (
                   <CharacterGLB job={j} height={280} />
                 ) : (
                   <Character3D job={j} height={280} />
