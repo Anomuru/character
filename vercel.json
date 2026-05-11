@@ -2,13 +2,11 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist/client",
   "routes": [
-    {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/api/server"
-    }
+    { "src": "/assets/(.*)", "dest": "/assets/$1" },
+    { "src": "/sounds/(.*)", "dest": "/sounds/$1" },
+    { "src": "/characters/(.*)", "dest": "/characters/$1" },
+    { "src": "/(favicon\\.ico|robots\\.txt|sitemap\\.xml|site\\.webmanifest)", "dest": "/$1" },
+    { "src": "/(.*\\.(png|jpg|jpeg|gif|svg|webp|ico|mp3|wav|ogg|m4a|glb|gltf|woff|woff2|ttf|otf|eot|json|txt|xml|webmanifest|map))", "dest": "/$1" },
+    { "src": "/(.*)", "dest": "/api/server" }
   ]
 }
