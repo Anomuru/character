@@ -1,7 +1,7 @@
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { ContactShadows, Environment } from "@react-three/drei";
+import { ContactShadows, Environment, OrbitControls } from "@react-three/drei";
 import { Suspense, useMemo, useRef } from "react";
-import { TextureLoader, type Group } from "three";
+import { DoubleSide, TextureLoader, type Group } from "three";
 import type { Job } from "@/lib/jobs";
 
 function Sprite({
@@ -36,7 +36,7 @@ function Sprite({
     shake.current = Math.max(0, shake.current - delta * 2.5);
 
     const shakeOffset = Math.sin(t * 38) * shake.current * 0.12;
-    ref.current.rotation.y = Math.sin(t * 0.5) * 0.18 + shakeOffset;
+    ref.current.rotation.z = shakeOffset * 0.5;
     ref.current.position.x = shakeOffset * 0.6;
     ref.current.position.y = Math.sin(t * 1.5) * 0.05 + (failed ? -0.15 : 0);
     const targetScale = failed ? 0.9 : 1;
@@ -60,6 +60,7 @@ function Sprite({
           opacity={opacity}
           color={failed ? "#888" : "#fff"}
           toneMapped={false}
+          side={DoubleSide}
         />
       </mesh>
     </group>
@@ -91,14 +92,20 @@ export function CharacterImage3D({
           <ambientLight intensity={0.85} />
           <directionalLight position={[3, 4, 3]} intensity={0.6} />
           <Sprite imageUrl={job.imageUrl} damage={damage} failed={failed} />
-          <ContactShadows
-            position={[0, -1.55, 0]}
-            opacity={0.35}
-            scale={5}
-            blur={2.6}
-            far={1.4}
-          />
+          <ContactShadows position={[0, -1.55, 0]} opacity={0.35} scale={5} blur={2.6} far={1.4} />
           <Environment preset="apartment" />
+          <OrbitControls
+            enablePan={false}
+            enableZoom={false}
+            target={[0, 0, 0]}
+            minPolarAngle={Math.PI / 2.6}
+            maxPolarAngle={Math.PI / 1.8}
+            minAzimuthAngle={-Math.PI / 4}
+            maxAzimuthAngle={Math.PI / 4}
+            enableDamping
+            dampingFactor={0.12}
+            rotateSpeed={0.7}
+          />
         </Suspense>
       </Canvas>
     </div>

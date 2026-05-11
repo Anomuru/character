@@ -448,12 +448,7 @@ function Profile({ job, onBack }: { job: Job; onBack: () => void }) {
 
           <div className="aspect-square w-full sm:aspect-auto sm:min-h-[500px] sm:flex-1">
             {job.imageUrl ? (
-              <CharacterImage3D
-                job={job}
-                height="100%"
-                damage={wrongPicks.size}
-                failed={failed}
-              />
+              <CharacterImage3D job={job} height="100%" damage={wrongPicks.size} failed={failed} />
             ) : job.modelUrl ? (
               <CharacterGLB job={job} height="100%" />
             ) : (
