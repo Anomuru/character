@@ -10,6 +10,7 @@ import {
 
 import appCss from "../styles.css?url";
 import { SkyBackground } from "@/components/SkyBackground";
+import { MusicToggle } from "@/components/MusicToggle";
 
 function NotFoundComponent() {
   return (
@@ -115,6 +116,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <SkyBackground />
+      <MusicToggle />
       <Outlet />
     </QueryClientProvider>
   );

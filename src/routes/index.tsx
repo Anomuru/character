@@ -321,6 +321,9 @@ function Index() {
 
 function Profile({ job, onBack }: { job: Job; onBack: () => void }) {
   const tint = JOB_TINTS[job.id] ?? DEFAULT_TINT;
+  const [shuffleSeed, setShuffleSeed] = useState<number>(() =>
+    Math.floor(Math.random() * 1_000_000),
+  );
 
   const pool = useMemo(() => {
     const correctNames = new Set(job.instruments.map((i) => i.name));
@@ -333,10 +336,9 @@ function Profile({ job, onBack }: { job: Job; onBack: () => void }) {
         }
       }
     }
-    const seed = job.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
-    const wrongs = shuffle(wrongPool, seed).slice(0, 8);
-    return shuffle([...job.instruments, ...wrongs], seed + 1);
-  }, [job]);
+    const wrongs = shuffle(wrongPool, shuffleSeed).slice(0, 8);
+    return shuffle([...job.instruments, ...wrongs], shuffleSeed + 1);
+  }, [job, shuffleSeed]);
 
   const correctSet = useMemo(() => new Set(job.instruments.map((i) => i.name)), [job]);
 
@@ -358,6 +360,7 @@ function Profile({ job, onBack }: { job: Job; onBack: () => void }) {
     setCelebrate(false);
     setShowLoss(false);
     setFeedback(null);
+    setShuffleSeed(Math.floor(Math.random() * 1_000_000));
   }, [job.id]);
 
   useEffect(() => {
@@ -415,6 +418,7 @@ function Profile({ job, onBack }: { job: Job; onBack: () => void }) {
     setFailed(false);
     setShowLoss(false);
     setCelebrate(false);
+    setShuffleSeed(Math.floor(Math.random() * 1_000_000));
   }
 
   return (
@@ -448,19 +452,9 @@ function Profile({ job, onBack }: { job: Job; onBack: () => void }) {
 
           <div className="aspect-square w-full sm:aspect-auto sm:min-h-[500px] sm:flex-1">
             {job.modelUrl ? (
-              <CharacterGLB
-                job={job}
-                height="100%"
-                damage={wrongPicks.size}
-                failed={failed}
-              />
+              <CharacterGLB job={job} height="100%" damage={wrongPicks.size} failed={failed} />
             ) : job.imageUrl ? (
-              <CharacterImage3D
-                job={job}
-                height="100%"
-                damage={wrongPicks.size}
-                failed={failed}
-              />
+              <CharacterImage3D job={job} height="100%" damage={wrongPicks.size} failed={failed} />
             ) : (
               <Character3D job={job} height="100%" zoom={150} hiddenParts={hidden} />
             )}

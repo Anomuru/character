@@ -35,8 +35,7 @@ function Avatar({
     const shakeOffset = Math.sin(t * 38) * shake.current * 0.12;
     group.current.rotation.y = Math.sin(t * 0.5) * 0.25 + shakeOffset;
     group.current.position.x = shakeOffset * 0.6;
-    group.current.position.y =
-      -0.95 + Math.sin(t * 1.5) * 0.02 + (failed ? -0.1 : 0);
+    group.current.position.y = -0.95 + Math.sin(t * 1.5) * 0.02 + (failed ? -0.1 : 0);
   });
 
   return (
