@@ -31,43 +31,158 @@
   --color-glow: var(--glow);
   --gradient-hero: var(--gradient-hero);
   --gradient-card: var(--gradient-card);
+  --gradient-sky: var(--gradient-sky);
   --shadow-glow: var(--shadow-glow);
   --shadow-card: var(--shadow-card);
+  --shadow-pop: var(--shadow-pop);
 }
 
 :root {
-  --radius: 0.875rem;
-  --background: oklch(0.18 0.04 270);
-  --foreground: oklch(0.97 0.01 270);
-  --card: oklch(0.23 0.05 270);
-  --card-foreground: oklch(0.97 0.01 270);
-  --popover: oklch(0.23 0.05 270);
-  --popover-foreground: oklch(0.97 0.01 270);
-  --primary: oklch(0.78 0.18 75);
-  --primary-foreground: oklch(0.18 0.04 270);
-  --secondary: oklch(0.32 0.06 270);
-  --secondary-foreground: oklch(0.97 0.01 270);
-  --muted: oklch(0.28 0.04 270);
-  --muted-foreground: oklch(0.72 0.03 270);
-  --accent: oklch(0.65 0.22 320);
-  --accent-foreground: oklch(0.97 0.01 270);
+  --radius: 1.25rem;
+
+  /* Bright, friendly daylight palette for kids */
+  --background: oklch(0.98 0.02 90);
+  --foreground: oklch(0.22 0.04 280);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.04 280);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.04 280);
+
+  --primary: oklch(0.7 0.21 35);
+  --primary-foreground: oklch(1 0 0);
+
+  --secondary: oklch(0.95 0.05 200);
+  --secondary-foreground: oklch(0.28 0.05 240);
+
+  --muted: oklch(0.95 0.02 100);
+  --muted-foreground: oklch(0.45 0.04 260);
+
+  --accent: oklch(0.78 0.18 310);
+  --accent-foreground: oklch(1 0 0);
+
   --destructive: oklch(0.62 0.24 27);
-  --destructive-foreground: oklch(0.98 0.003 248);
-  --border: oklch(0.32 0.05 270);
-  --input: oklch(0.32 0.05 270);
-  --ring: oklch(0.78 0.18 75);
-  --glow: oklch(0.85 0.2 75);
-  --gradient-hero: linear-gradient(135deg, oklch(0.22 0.07 280), oklch(0.28 0.1 320));
-  --gradient-card: linear-gradient(160deg, oklch(0.26 0.06 270), oklch(0.21 0.05 285));
-  --shadow-glow: 0 0 40px color-mix(in oklab, oklch(0.78 0.18 75) 40%, transparent);
-  --shadow-card: 0 20px 50px -20px oklch(0.1 0.04 270 / 0.7);
+  --destructive-foreground: oklch(1 0 0);
+
+  --border: oklch(0.9 0.03 90);
+  --input: oklch(0.92 0.03 90);
+  --ring: oklch(0.7 0.21 35);
+  --glow: oklch(0.85 0.22 60);
+
+  /* Sky background lives on the SkyBackground component; the body itself stays neutral. */
+  --gradient-hero: transparent;
+  --gradient-sky: linear-gradient(180deg, #CFE7FB 0%, #E2F0FA 45%, #F5F4EC 100%);
+  --gradient-card: linear-gradient(160deg, oklch(1 0 0), oklch(0.99 0.005 200));
+
+  --shadow-glow: 0 0 0 4px color-mix(in oklab, oklch(0.7 0.21 35) 18%, transparent),
+    0 18px 40px -12px color-mix(in oklab, oklch(0.7 0.21 35) 45%, transparent);
+  --shadow-card: 0 18px 40px -18px oklch(0.4 0.1 270 / 0.35),
+    0 2px 6px -2px oklch(0.4 0.1 270 / 0.18);
+  --shadow-pop: 0 14px 0 -6px oklch(0.85 0.05 280 / 0.35),
+    0 22px 40px -18px oklch(0.3 0.1 280 / 0.4);
 }
 
 @layer base {
   * { border-color: var(--color-border); }
-  body {
-    background: var(--gradient-hero);
+  html, body {
+    background: transparent;
     color: var(--color-foreground);
     min-height: 100vh;
+    font-feature-settings: "ss01", "cv11";
   }
 }
+
+@keyframes cloud-drift {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(180vw); }
+}
+
+.sky-cloud { animation-name: cloud-drift; animation-timing-function: linear; animation-iteration-count: infinite; }
+
+@keyframes balloon-bob {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50%      { transform: translateY(-14px) rotate(2deg); }
+}
+.sky-balloon-bob { animation: balloon-bob 5.5s ease-in-out infinite; transform-origin: 50% 10%; }
+
+@keyframes sparkle-pop {
+  0%   { transform: scale(0.2); opacity: 0; }
+  50%  { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(0); opacity: 0; }
+}
+.sky-sparkle { animation: sparkle-pop 0.9s ease-out forwards; }
+
+/* Paper plane glides across the sky on a long loop, with subtle bob. */
+@keyframes plane-glide {
+  0%   { transform: translate(-15vw, 0) rotate(-4deg); }
+  10%  { transform: translate(10vw, -8px) rotate(2deg); }
+  25%  { transform: translate(30vw, 6px) rotate(-2deg); }
+  50%  { transform: translate(55vw, -10px) rotate(3deg); }
+  75%  { transform: translate(80vw, 4px) rotate(-1deg); }
+  100% { transform: translate(115vw, -6px) rotate(2deg); }
+}
+.sky-plane-glide { animation: plane-glide 28s linear infinite; }
+
+/* Plane spin on click — quick 360 */
+@keyframes plane-trick {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.sky-plane-trick { animation: plane-trick 600ms cubic-bezier(0.4, 0, 0.2, 1); }
+
+/* Bird wing flap */
+@keyframes bird-flap-up {
+  0%, 100% { transform: scaleY(1); }
+  50%      { transform: scaleY(0.55); }
+}
+@keyframes bird-flap-down {
+  0%, 100% { transform: scaleY(1); }
+  50%      { transform: scaleY(1.35); }
+}
+.sky-bird-wing-up   { animation: bird-flap-up 360ms ease-in-out infinite; transform-origin: 50% 100%; }
+.sky-bird-wing-down { animation: bird-flap-down 360ms ease-in-out infinite; transform-origin: 50% 0%; }
+
+/* Whole bird bobs slowly while drifting */
+@keyframes bird-drift {
+  0%   { transform: translate(0, 0); }
+  50%  { transform: translate(8vw, -12px); }
+  100% { transform: translate(0, 0); }
+}
+.sky-bird-drift { animation: bird-drift 18s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sky-cloud, .sky-balloon-bob, .sky-plane-glide, .sky-plane-trick,
+  .sky-bird-wing-up, .sky-bird-wing-down, .sky-bird-drift {
+    animation: none !important;
+  }
+}
+
+/* Friendly floating animation for hero badges and stickers */
+@keyframes float-soft {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-8px) rotate(1deg); }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+
+@keyframes pop-in {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+/* Transient happy/sad face overlay — pops in, holds for ~1s total, fades out */
+@keyframes feedback-pop {
+  0%   { transform: scale(0.3) rotate(-12deg); opacity: 0; }
+  20%  { transform: scale(1.18) rotate(4deg); opacity: 1; }
+  35%  { transform: scale(1) rotate(0deg); opacity: 1; }
+  80%  { transform: scale(1) rotate(0deg); opacity: 1; }
+  100% { transform: scale(0.92) rotate(0deg); opacity: 0; }
+}
+
+.animate-float-soft { animation: float-soft 4s ease-in-out infinite; }
+.animate-wiggle { animation: wiggle 1.6s ease-in-out infinite; }
+.animate-pop-in { animation: pop-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.animate-feedback-pop { animation: feedback-pop 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
