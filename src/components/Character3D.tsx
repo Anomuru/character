@@ -150,6 +150,16 @@ function Hair({
             <meshStandardMaterial color={color} roughness={0.85} />
           </RoundedBox>
         </mesh>
+        {/* strand falling over the front-left shoulder so length reads from the front */}
+        <mesh position={[-0.32, -0.5, 0.15]} rotation={[0, 0, 0.05]} castShadow>
+          <capsuleGeometry args={[0.075, 0.55, 10, 20]} />
+          <meshStandardMaterial color={color} roughness={0.85} />
+        </mesh>
+        {/* tip taper */}
+        <mesh position={[-0.32, -0.82, 0.16]} castShadow>
+          <sphereGeometry args={[0.06, 16, 16]} />
+          <meshStandardMaterial color={color} roughness={0.85} />
+        </mesh>
       </group>
     );
   }
