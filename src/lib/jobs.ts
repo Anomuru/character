@@ -1,5 +1,15 @@
 export type Instrument = { name: string; emoji: string };
 
+export type Appearance = {
+  gender: "male" | "female";
+  skinTone: string;
+  hairColor: string;
+  hairStyle: "short" | "long" | "ponytail" | "bun" | "buzz";
+  glasses?: boolean;
+  facialHair?: "none" | "mustache" | "beard";
+  accessory?: "stethoscope" | "badge" | "tie" | "scarf" | "labcoat" | "none";
+};
+
 export type Job = {
   id: string;
   name: string;
@@ -13,6 +23,7 @@ export type Job = {
   toolEmoji: string;
   instruments: Instrument[];
   stats: { skill: number; speed: number; creativity: number };
+  appearance: Appearance;
   // Ready Player Me .glb URL. Create avatars at https://readyplayer.me
   // then paste the URL here (format: https://models.readyplayer.me/{id}.glb).
   // Leave undefined to fall back to the primitive 3D character.
@@ -40,6 +51,14 @@ export const JOBS: Job[] = [
       { name: "Olov", emoji: "🔥" },
     ],
     stats: { skill: 92, speed: 78, creativity: 88 },
+    appearance: {
+      gender: "male",
+      skinTone: "#E8B895",
+      hairColor: "#2A1810",
+      hairStyle: "short",
+      facialHair: "mustache",
+      accessory: "scarf",
+    },
   },
   {
     id: "doctor",
@@ -62,6 +81,13 @@ export const JOBS: Job[] = [
       { name: "Termometr", emoji: "🌡️" },
     ],
     stats: { skill: 95, speed: 70, creativity: 60 },
+    appearance: {
+      gender: "female",
+      skinTone: "#F2D2B6",
+      hairColor: "#3D2817",
+      hairStyle: "long",
+      accessory: "stethoscope",
+    },
   },
   {
     id: "mechanic",
@@ -84,6 +110,13 @@ export const JOBS: Job[] = [
       { name: "Akkumulyator", emoji: "🔋" },
     ],
     stats: { skill: 88, speed: 82, creativity: 70 },
+    appearance: {
+      gender: "male",
+      skinTone: "#C8966B",
+      hairColor: "#1A0F0A",
+      hairStyle: "buzz",
+      facialHair: "beard",
+    },
   },
   {
     id: "builder",
@@ -106,6 +139,13 @@ export const JOBS: Job[] = [
       { name: "Lampochka", emoji: "💡" },
     ],
     stats: { skill: 85, speed: 75, creativity: 65 },
+    appearance: {
+      gender: "male",
+      skinTone: "#F0C8A0",
+      hairColor: "#A85020",
+      hairStyle: "short",
+      facialHair: "none",
+    },
   },
   {
     id: "scientist",
@@ -128,6 +168,14 @@ export const JOBS: Job[] = [
       { name: "Kalkulyator", emoji: "🧮" },
     ],
     stats: { skill: 96, speed: 60, creativity: 94 },
+    appearance: {
+      gender: "female",
+      skinTone: "#F5D4B8",
+      hairColor: "#C8C2BA",
+      hairStyle: "bun",
+      glasses: true,
+      accessory: "labcoat",
+    },
   },
   {
     id: "programmer",
@@ -150,6 +198,13 @@ export const JOBS: Job[] = [
       { name: "Sichqoncha", emoji: "🖱️" },
     ],
     stats: { skill: 90, speed: 85, creativity: 92 },
+    appearance: {
+      gender: "male",
+      skinTone: "#D4A878",
+      hairColor: "#0F0805",
+      hairStyle: "short",
+      glasses: true,
+    },
   },
   {
     id: "teacher",
@@ -172,6 +227,13 @@ export const JOBS: Job[] = [
       { name: "Soat", emoji: "⏰" },
     ],
     stats: { skill: 88, speed: 70, creativity: 85 },
+    appearance: {
+      gender: "female",
+      skinTone: "#EFCAA8",
+      hairColor: "#5C3320",
+      hairStyle: "ponytail",
+      glasses: true,
+    },
   },
   {
     id: "police",
@@ -194,5 +256,13 @@ export const JOBS: Job[] = [
       { name: "Chiroq", emoji: "🔦" },
     ],
     stats: { skill: 87, speed: 80, creativity: 65 },
+    appearance: {
+      gender: "male",
+      skinTone: "#D4A07A",
+      hairColor: "#0A0808",
+      hairStyle: "short",
+      facialHair: "mustache",
+      accessory: "badge",
+    },
   },
 ];

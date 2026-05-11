@@ -293,9 +293,9 @@ function Index() {
 
               <div className="relative overflow-hidden">
                 {hasAvatar ? (
-                  <CharacterGLB job={j} height={240} />
+                  <CharacterGLB job={j} height={280} />
                 ) : (
-                  <Character3D job={j} height={240} />
+                  <Character3D job={j} height={280} />
                 )}
               </div>
 
