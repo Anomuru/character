@@ -4,6 +4,7 @@ import { JOBS, type Job, type Instrument } from "@/lib/jobs";
 import { Character3D, type BodyPart } from "@/components/Character3D";
 import { CharacterGLB } from "@/components/CharacterGLB";
 import { CharacterImage } from "@/components/CharacterImage";
+import { CharacterImage3D } from "@/components/CharacterImage3D";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -446,7 +447,14 @@ function Profile({ job, onBack }: { job: Job; onBack: () => void }) {
           </div>
 
           <div className="aspect-square w-full sm:aspect-auto sm:min-h-[500px] sm:flex-1">
-            {job.modelUrl ? (
+            {job.imageUrl ? (
+              <CharacterImage3D
+                job={job}
+                height="100%"
+                damage={wrongPicks.size}
+                failed={failed}
+              />
+            ) : job.modelUrl ? (
               <CharacterGLB job={job} height="100%" />
             ) : (
               <Character3D job={job} height="100%" zoom={150} hiddenParts={hidden} />
