@@ -13,16 +13,19 @@ export type Job = {
   toolEmoji: string;
   instruments: Instrument[];
   stats: { skill: number; speed: number; creativity: number };
+  // Ready Player Me .glb URL. Create avatars at https://readyplayer.me
+  // then paste the URL here (format: https://models.readyplayer.me/{id}.glb).
+  // Leave undefined to fall back to the primitive 3D character.
+  modelUrl?: string;
 };
 
 export const JOBS: Job[] = [
   {
     id: "chef",
     name: "Marko",
-    title: "Oshpaz Ustasi",
+    title: "Oshpaz",
     tagline: "Ishtiyoq va aniqlik bilan tayyorlaydi",
-    description:
-      "Marko shahardagi eng band oshxonani boshqaradi. Tez qo'llar, o'tkir sezgi.",
+    description: "Marko shahardagi eng band oshxonani boshqaradi. Tez qo'llar, o'tkir sezgi.",
     bodyColor: "#f5f5f5",
     hatColor: "#ffffff",
     accentColor: "#e74c3c",
@@ -34,13 +37,14 @@ export const JOBS: Job[] = [
       { name: "Aralashtirish Kosasi", emoji: "🥣" },
       { name: "Ziravorlar Javoni", emoji: "🧂" },
       { name: "Retsept Kitobi", emoji: "📖" },
+      { name: "Olov", emoji: "🔥" },
     ],
     stats: { skill: 92, speed: 78, creativity: 88 },
   },
   {
     id: "doctor",
     name: "Doktor Lin",
-    title: "Jarroh",
+    title: "Shifokor",
     tagline: "Barqaror qo'llar, o'tkir aql",
     description:
       "Doktor Lin tez yordam bo'limida hayot qutqaradi. Bosim ostida xotirjam, doimo tayyor.",
@@ -55,6 +59,7 @@ export const JOBS: Job[] = [
       { name: "Skalpel", emoji: "🔬" },
       { name: "Birinchi Yordam Qutisi", emoji: "🧰" },
       { name: "Tibbiy Jadval", emoji: "📋" },
+      { name: "Termometr", emoji: "🌡️" },
     ],
     stats: { skill: 95, speed: 70, creativity: 60 },
   },
@@ -76,13 +81,14 @@ export const JOBS: Job[] = [
       { name: "Bolg'a", emoji: "🔨" },
       { name: "Asboblar Qutisi", emoji: "🧰" },
       { name: "Moy Idishi", emoji: "🛢️" },
+      { name: "Akkumulyator", emoji: "🔋" },
     ],
     stats: { skill: 88, speed: 82, creativity: 70 },
   },
   {
     id: "builder",
     name: "Sem",
-    title: "Qurilish Professori",
+    title: "Quruvchi",
     tagline: "Chizmalardan orzularni quradi",
     description:
       "Sem har bir qurilish maydonida jamoani boshqaradi. Aniqlik, kuch va ajoyib kulgi.",
@@ -97,13 +103,14 @@ export const JOBS: Job[] = [
       { name: "O'lchov Lentasi", emoji: "📏" },
       { name: "Chizmalar", emoji: "📐" },
       { name: "Qattiq Dubulg'a", emoji: "⛑️" },
+      { name: "Lampochka", emoji: "💡" },
     ],
     stats: { skill: 85, speed: 75, creativity: 65 },
   },
   {
     id: "scientist",
     name: "Doktor Vega",
-    title: "Olim",
+    title: "Tadqiqotchi",
     tagline: "Qiziquvchanlik eng katta asbob",
     description:
       "Doktor Veganing laboratoriyasi har hafta yangi kashfiyotlarni ochadi. Har doim daholardan bir tajriba narida.",
@@ -111,13 +118,14 @@ export const JOBS: Job[] = [
     hatColor: "#9b59b6",
     accentColor: "#8e44ad",
     hatType: "none",
-    toolEmoji: "🧪",
+    toolEmoji: "🔬",
     instruments: [
-      { name: "Stakanlar", emoji: "🧪" },
+      { name: "Tadqiqot Daftari", emoji: "📓" },
       { name: "Mikroskop", emoji: "🔬" },
-      { name: "Laboratoriya Daftari", emoji: "📓" },
-      { name: "Ko'zoynak", emoji: "🥽" },
-      { name: "DNK Namunasi", emoji: "🧬" },
+      { name: "Lupa", emoji: "🔍" },
+      { name: "Probirka", emoji: "🧪" },
+      { name: "Statistik Jadval", emoji: "📊" },
+      { name: "Kalkulyator", emoji: "🧮" },
     ],
     stats: { skill: 96, speed: 60, creativity: 94 },
   },
@@ -139,6 +147,7 @@ export const JOBS: Job[] = [
       { name: "Kod Muharriri", emoji: "📝" },
       { name: "Kofe", emoji: "☕" },
       { name: "Debugging Asboblari", emoji: "🐛" },
+      { name: "Sichqoncha", emoji: "🖱️" },
     ],
     stats: { skill: 90, speed: 85, creativity: 92 },
   },
@@ -160,6 +169,7 @@ export const JOBS: Job[] = [
       { name: "Darslik", emoji: "📖" },
       { name: "Globus", emoji: "🌍" },
       { name: "Sertifikat", emoji: "📜" },
+      { name: "Soat", emoji: "⏰" },
     ],
     stats: { skill: 88, speed: 70, creativity: 85 },
   },
@@ -181,6 +191,7 @@ export const JOBS: Job[] = [
       { name: "Daftar", emoji: "📋" },
       { name: "Hushtак", emoji: "🔦" },
       { name: "Nishon", emoji: "🎖️" },
+      { name: "Chiroq", emoji: "🔦" },
     ],
     stats: { skill: 87, speed: 80, creativity: 65 },
   },

@@ -2,14 +2,20 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { JOBS, type Job, type Instrument } from "@/lib/jobs";
 import { Character3D, type BodyPart } from "@/components/Character3D";
+import { CharacterGLB } from "@/components/CharacterGLB";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { getAllAvatars } from "@/lib/avatarStore";
+import { InstrumentIcon } from "@/lib/instrument-icons";
+import { playCorrect, playWrong } from "@/lib/sounds";
+import { CongratulationsModal } from "@/components/CongratulationsModal";
+import { GameOverModal } from "@/components/GameOverModal";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Kasb Sarguzashti 3D — Kasbni Tanla, Kunni Yasha" },
+      { title: "Kasblar shaharchasi" },
       {
         name: "description",
         content:
@@ -20,7 +26,7 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-type Stage = "select" | "profile" | "playing";
+type Stage = "select" | "profile";
 
 const PART_ORDER: BodyPart[] = [
   "hat",
@@ -43,82 +49,84 @@ function shuffle<T>(arr: T[], seed: number): T[] {
   return a;
 }
 
+function useAvatarOverrides() {
+  const [overrides, setOverrides] = useState<Record<string, string>>(() => getAllAvatars());
+  useEffect(() => {
+    function onChange() {
+      setOverrides(getAllAvatars());
+    }
+    window.addEventListener("avatars:change", onChange);
+    window.addEventListener("storage", onChange);
+    return () => {
+      window.removeEventListener("avatars:change", onChange);
+      window.removeEventListener("storage", onChange);
+    };
+  }, []);
+  return overrides;
+}
+
+function withOverride(job: Job, overrides: Record<string, string>): Job {
+  const url = overrides[job.id] ?? job.modelUrl;
+  return url ? { ...job, modelUrl: url } : job;
+}
+
 function Index() {
   const [stage, setStage] = useState<Stage>("select");
   const [selectedId, setSelectedId] = useState<string>(JOBS[0].id);
+  const overrides = useAvatarOverrides();
 
-  const job = useMemo(() => JOBS.find((j) => j.id === selectedId)!, [selectedId]);
+  const baseJob = useMemo(() => JOBS.find((j) => j.id === selectedId)!, [selectedId]);
+  const job = withOverride(baseJob, overrides);
 
   function pickJob(j: Job) {
     setSelectedId(j.id);
     setStage("profile");
   }
 
-  if (stage === "playing") {
-    return <Playing job={job} onExit={() => setStage("select")} />;
-  }
-
   if (stage === "profile") {
-    return (
-      <Profile
-        job={job}
-        onBack={() => setStage("select")}
-        onStart={() => setStage("playing")}
-      />
-    );
+    return <Profile job={job} onBack={() => setStage("select")} />;
   }
 
   return (
-    <main className="mx-auto max-w-7xl px-6 py-12">
-      <header className="mb-12 text-center">
-        <Badge className="mb-4 bg-accent/20 text-accent-foreground border border-accent/40">
+    <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:py-12">
+      <header className="mb-8 text-center sm:mb-10 lg:mb-12">
+        <Badge className="mb-3 bg-accent/20 text-accent-foreground border border-accent/40 sm:mb-4">
           Rol O'ynash Simulyatsiyasi
         </Badge>
-        <h1 className="text-5xl font-bold tracking-tight md:text-6xl">
-          Kasb <span className="text-primary">Sarguzashti</span> 3D
+        <h1 className="text-3xl font-bold tracking-tight sm:text-5xl md:text-6xl">
+          Kasblar <span className="text-primary">shaharchasi</span>
         </h1>
-        <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-          Xarakter profillarini ko'rib chiqing, to'g'ri ish asboblarini jihozlang va o'zingiz tanlagan har qanday kasbda bir kunni boshlang.
-        </p>
       </header>
 
-      <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {JOBS.map((j) => (
-          <Card
-            key={j.id}
-            className="group cursor-pointer overflow-hidden border-border bg-[var(--gradient-card)] p-0 transition-all hover:scale-[1.02] hover:shadow-[var(--shadow-glow)]"
-            onClick={() => pickJob(j)}
-          >
-            <div className="bg-background/30">
-              <Character3D job={j} height={260} />
-            </div>
-            <div className="p-5">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xl font-bold">{j.name}</h3>
-                <span className="text-2xl">{j.toolEmoji}</span>
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+        {JOBS.map((rawJob) => {
+          const j = withOverride(rawJob, overrides);
+          const hasAvatar = Boolean(j.modelUrl);
+          return (
+            <Card
+              key={j.id}
+              className="group cursor-pointer overflow-hidden border-border bg-[var(--gradient-card)] p-0 transition-all hover:scale-[1.02] hover:shadow-[var(--shadow-glow)]"
+              onClick={() => pickJob(rawJob)}
+            >
+              <div className="bg-background/30">
+                {hasAvatar ? (
+                  <CharacterGLB job={j} height={220} />
+                ) : (
+                  <Character3D job={j} height={220} />
+                )}
               </div>
-              <p className="text-sm font-medium text-primary">{j.title}</p>
-              <p className="mt-2 text-sm text-muted-foreground">{j.tagline}</p>
-              <Button className="mt-4 w-full" variant="default">
-                Profilni Ko'rish
-              </Button>
-            </div>
-          </Card>
-        ))}
+              <div className="p-4 text-center sm:p-5">
+                <p className="text-lg font-bold text-primary sm:text-xl">{j.title}</p>
+              </div>
+            </Card>
+          );
+        })}
       </section>
     </main>
   );
 }
 
-function Profile({
-  job,
-  onBack,
-  onStart,
-}: {
-  job: Job;
-  onBack: () => void;
-  onStart: () => void;
-}) {
+function Profile({ job, onBack }: { job: Job; onBack: () => void }) {
   // Mixed pool: correct instruments + 4 wrong ones from other jobs, shuffled.
   const pool = useMemo(() => {
     const correctNames = new Set(job.instruments.map((i) => i.name));
@@ -132,20 +140,19 @@ function Profile({
       }
     }
     const seed = job.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
-    const wrongs = shuffle(wrongPool, seed).slice(0, 4);
+    const wrongs = shuffle(wrongPool, seed).slice(0, 8);
     return shuffle([...job.instruments, ...wrongs], seed + 1);
   }, [job]);
 
-  const correctSet = useMemo(
-    () => new Set(job.instruments.map((i) => i.name)),
-    [job],
-  );
+  const correctSet = useMemo(() => new Set(job.instruments.map((i) => i.name)), [job]);
 
   const [equipped, setEquipped] = useState<Set<string>>(new Set());
   const [wrongPicks, setWrongPicks] = useState<Set<string>>(new Set());
   const [hidden, setHidden] = useState<Set<BodyPart>>(new Set());
   const [error, setError] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
+  const [celebrate, setCelebrate] = useState(false);
+  const [showLoss, setShowLoss] = useState(false);
 
   // Reset whenever job changes
   useEffect(() => {
@@ -154,18 +161,36 @@ function Profile({
     setHidden(new Set());
     setError(null);
     setFailed(false);
+    setCelebrate(false);
+    setShowLoss(false);
   }, [job.id]);
 
   const allEquipped = equipped.size === job.instruments.length;
+
+  // Trigger celebration the first time all correct tools are equipped
+  useEffect(() => {
+    if (allEquipped && !failed) {
+      setCelebrate(true);
+    }
+  }, [allEquipped, failed]);
+
+  // Trigger game-over modal when the character is fully broken
+  useEffect(() => {
+    if (failed) {
+      setShowLoss(true);
+    }
+  }, [failed]);
 
   function pick(ins: Instrument) {
     if (failed) return;
     if (equipped.has(ins.name) || wrongPicks.has(ins.name)) return;
 
     if (correctSet.has(ins.name)) {
+      playCorrect();
       setEquipped((prev) => new Set(prev).add(ins.name));
       setError(null);
     } else {
+      playWrong();
       setWrongPicks((prev) => new Set(prev).add(ins.name));
       const nextHidden = new Set(hidden);
       const part = PART_ORDER[hidden.size];
@@ -184,17 +209,25 @@ function Profile({
     setHidden(new Set());
     setError(null);
     setFailed(false);
+    setShowLoss(false);
+    setCelebrate(false);
   }
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-10">
-      <Button variant="ghost" onClick={onBack} className="mb-6">
+    <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
+      <Button variant="ghost" onClick={onBack} className="mb-4 sm:mb-6">
         ← Xarakterlarga Qaytish
       </Button>
 
-      <div className="grid gap-8 lg:grid-cols-2">
-        <Card className="overflow-hidden border-border bg-[var(--gradient-card)] p-0">
-          <Character3D job={job} height={460} hiddenParts={hidden} />
+      <div className="grid gap-6 sm:gap-8 lg:grid-cols-2">
+        <Card className="flex flex-col overflow-hidden border-border bg-[var(--gradient-card)] p-0">
+          <div className="aspect-square w-full sm:aspect-auto sm:min-h-[500px] sm:flex-1">
+            {job.modelUrl ? (
+              <CharacterGLB job={job} height="100%" />
+            ) : (
+              <Character3D job={job} height="100%" zoom={150} hiddenParts={hidden} />
+            )}
+          </div>
           {hidden.size > 0 && (
             <div className="border-t border-border bg-destructive/10 px-4 py-2 text-center text-xs text-destructive">
               {failed
@@ -202,151 +235,66 @@ function Profile({
                 : `${hidden.size} tana qismi yo'qoldi. Ehtiyotkorlik bilan tanlang!`}
             </div>
           )}
+          <div className="border-t border-border bg-background/40 px-6 py-5 text-center">
+            <p className="text-2xl font-bold tracking-tight text-primary">{job.title}</p>
+          </div>
         </Card>
 
         <div>
-          <Badge className="mb-3 bg-primary/20 text-primary border border-primary/40">
-            {job.title}
-          </Badge>
-          <h2 className="text-4xl font-bold">{job.name}</h2>
-          <p className="mt-2 text-lg text-muted-foreground">{job.description}</p>
+          {error && (
+            <div className="mb-4 rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-2 text-sm text-destructive">
+              {error}
+            </div>
+          )}
 
-          <div className="mt-6 grid grid-cols-3 gap-3">
-            {(["skill", "speed", "creativity"] as const).map((k) => (
-              <div key={k} className="rounded-lg border border-border bg-card/50 p-3">
-                <div className="text-xs uppercase text-muted-foreground">
-                  {k === "skill" ? "mahorat" : k === "speed" ? "tezlik" : "ijodkorlik"}
-                </div>
-                <div className="text-2xl font-bold text-primary">{job.stats[k]}</div>
-                <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-muted">
-                  <div
-                    className="h-full bg-primary"
-                    style={{ width: `${job.stats[k]}%` }}
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+            {pool.map((ins) => {
+              const ok = equipped.has(ins.name);
+              const wrong = wrongPicks.has(ins.name);
+              return (
+                <button
+                  key={ins.name}
+                  onClick={() => pick(ins)}
+                  disabled={ok || wrong || failed}
+                  className={`flex flex-col items-center justify-center rounded-2xl border p-4 text-center transition-all sm:p-6 ${
+                    ok
+                      ? "border-primary bg-primary/10 shadow-[var(--shadow-glow)]"
+                      : wrong
+                        ? "border-destructive/60 bg-destructive/10 opacity-60"
+                        : "border-border bg-card/50 hover:border-primary/50 hover:bg-card/80"
+                  }`}
+                >
+                  <InstrumentIcon
+                    name={ins.name}
+                    size={48}
+                    className={
+                      ok ? "text-primary" : wrong ? "text-destructive" : "text-foreground/80"
+                    }
                   />
-                </div>
-              </div>
-            ))}
+                  <div className="mt-3 text-sm font-semibold sm:mt-4 sm:text-base">{ins.name}</div>
+                </button>
+              );
+            })}
           </div>
 
-          <div className="mt-8">
-            <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Jihozlar Muammosi</h3>
-              <span className="text-sm text-muted-foreground">
-                {equipped.size}/{job.instruments.length} to'g'ri
-              </span>
-            </div>
-            <p className="mb-3 text-sm text-muted-foreground">
-              Asboblar boshqa ishlardan olingan narsalar bilan aralashtirilgan. Faqat {job.title}{" "}
-              haqiqatda foydalanadigan narsalarni tanlang — noto'g'ri tanlovlar xarakteringizni parchalaydi!
-            </p>
-
-            {error && (
-              <div className="mb-4 rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-2 text-sm text-destructive">
-                {error}
-              </div>
-            )}
-
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {pool.map((ins) => {
-                const ok = equipped.has(ins.name);
-                const wrong = wrongPicks.has(ins.name);
-                return (
-                  <button
-                    key={ins.name}
-                    onClick={() => pick(ins)}
-                    disabled={ok || wrong || failed}
-                    className={`rounded-xl border p-4 text-left transition-all ${
-                      ok
-                        ? "border-primary bg-primary/10 shadow-[var(--shadow-glow)]"
-                        : wrong
-                          ? "border-destructive/60 bg-destructive/10 opacity-60"
-                          : "border-border bg-card/50 hover:border-primary/50"
-                    }`}
-                  >
-                    <div className="text-3xl">{ins.emoji}</div>
-                    <div className="mt-2 text-sm font-medium">{ins.name}</div>
-                    <div className="mt-1 text-xs text-muted-foreground">
-                      {ok ? "✓ Jihozlangan" : wrong ? "✗ Noto'g'ri asbob" : "Jihozlash uchun bosing"}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="mt-6 flex gap-3">
-              <Button variant="outline" onClick={reset} className="flex-1">
-                Muammoni Qayta Boshlash
-              </Button>
-              <Button
-                className="flex-1"
-                size="lg"
-                disabled={!allEquipped || failed}
-                onClick={onStart}
-              >
-                {failed
-                  ? "Xarakter buzilgan — qayta boshlang"
-                  : allEquipped
-                    ? "Smenani Boshlash →"
-                    : "To'g'ri asboblarni tanlang"}
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
-  );
-}
-
-function Playing({ job, onExit }: { job: Job; onExit: () => void }) {
-  const [score, setScore] = useState(0);
-  const [task, setTask] = useState(0);
-
-  const tasks = job.instruments.map((i) => `${i.name}dan foydalaning ${i.emoji}`);
-
-  function doTask() {
-    setScore((s) => s + 10 + Math.floor(Math.random() * 15));
-    setTask((t) => (t + 1) % tasks.length);
-  }
-
-  return (
-    <main className="mx-auto max-w-5xl px-6 py-10">
-      <div className="mb-6 flex items-center justify-between">
-        <Button variant="ghost" onClick={onExit}>← Smenani Tugatish</Button>
-        <div className="rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-bold text-primary">
-          Ball: {score}
-        </div>
-      </div>
-
-      <div className="grid gap-8 lg:grid-cols-2">
-        <Card className="overflow-hidden border-border bg-[var(--gradient-card)] p-0">
-          <Character3D job={job} height={420} />
-        </Card>
-
-        <div>
-          <h2 className="text-3xl font-bold">{job.name} smenada</h2>
-          <p className="mt-1 text-muted-foreground">{job.title}</p>
-
-          <Card className="mt-6 border-border bg-card/60 p-6">
-            <div className="text-sm uppercase text-muted-foreground">Joriy vazifa</div>
-            <div className="mt-2 text-2xl font-bold">{tasks[task]}</div>
-            <Button className="mt-6 w-full" size="lg" onClick={doTask}>
-              Vazifani Bajarish
+          <div className="mt-4 sm:mt-6">
+            <Button variant="outline" onClick={reset} className="w-full">
+              Muammoni Qayta Boshlash
             </Button>
-          </Card>
-
-          <div className="mt-6 grid grid-cols-5 gap-2">
-            {job.instruments.map((i) => (
-              <div
-                key={i.name}
-                className="rounded-lg border border-border bg-card/50 p-3 text-center text-2xl"
-                title={i.name}
-              >
-                {i.emoji}
-              </div>
-            ))}
           </div>
         </div>
       </div>
+
+      <CongratulationsModal
+        open={celebrate}
+        jobTitle={job.title}
+        onClose={() => {
+          setCelebrate(false);
+          onBack();
+        }}
+      />
+
+      <GameOverModal open={showLoss} onTryAgain={reset} />
     </main>
   );
 }
