@@ -127,30 +127,29 @@ function Hair({
     return (
       <group>
         {!hatCovers && (
-          <mesh position={[0, 0.06, -0.02]} castShadow>
-            <sphereGeometry args={[0.46, 32, 32, 0, Math.PI * 2, 0, Math.PI / 1.9]} />
-            <meshStandardMaterial color={color} roughness={0.85} />
-          </mesh>
-        )}
-        {/* hair falling down behind shoulders */}
-        <mesh position={[0, -0.18, -0.18]} castShadow>
-          <RoundedBox args={[0.7, 0.85, 0.22]} radius={0.18} smoothness={4}>
-            <meshStandardMaterial color={color} roughness={0.85} />
-          </RoundedBox>
-        </mesh>
-        {/* side bangs */}
-        {!hatCovers && (
           <>
-            <mesh position={[-0.32, -0.05, 0.18]} rotation={[0, 0, 0.3]}>
-              <boxGeometry args={[0.14, 0.32, 0.18]} />
+            {/* hair cap sitting on the head — only top + back, leaves face clear */}
+            <mesh position={[0, 0.04, -0.02]} castShadow>
+              <sphereGeometry args={[0.445, 40, 40, 0, Math.PI * 2, 0, Math.PI / 2.2]} />
               <meshStandardMaterial color={color} roughness={0.85} />
             </mesh>
-            <mesh position={[0.32, -0.05, 0.18]} rotation={[0, 0, -0.3]}>
-              <boxGeometry args={[0.14, 0.32, 0.18]} />
+            {/* small wisps in front of the ears, NOT covering the face */}
+            <mesh position={[-0.4, -0.12, 0.06]} rotation={[0, 0, 0.2]} castShadow>
+              <capsuleGeometry args={[0.07, 0.22, 8, 16]} />
+              <meshStandardMaterial color={color} roughness={0.85} />
+            </mesh>
+            <mesh position={[0.4, -0.12, 0.06]} rotation={[0, 0, -0.2]} castShadow>
+              <capsuleGeometry args={[0.07, 0.22, 8, 16]} />
               <meshStandardMaterial color={color} roughness={0.85} />
             </mesh>
           </>
         )}
+        {/* sleek drape behind the head, hangs to upper back */}
+        <mesh position={[0, -0.3, -0.28]} rotation={[0.08, 0, 0]} castShadow>
+          <RoundedBox args={[0.5, 0.65, 0.14]} radius={0.14} smoothness={4}>
+            <meshStandardMaterial color={color} roughness={0.85} />
+          </RoundedBox>
+        </mesh>
       </group>
     );
   }
@@ -605,11 +604,7 @@ function CharacterModel({ job, hidden }: { job: Job; hidden: Set<BodyPart> }) {
       {show("head") && <Head appearance={appearance} hatCovers={hatCovers} />}
       {show("hat") && show("head") && <Hat type={job.hatType} color={job.hatColor} />}
       {show("torso") && (
-        <Torso
-          bodyColor={job.bodyColor}
-          accentColor={job.accentColor}
-          gender={appearance.gender}
-        />
+        <Torso bodyColor={job.bodyColor} accentColor={job.accentColor} gender={appearance.gender} />
       )}
       {show("torso") && appearance.accessory === "labcoat" && <LabCoat />}
       {show("torso") && appearance.accessory === "stethoscope" && <Stethoscope />}
