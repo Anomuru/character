@@ -597,14 +597,16 @@ function Leg({
 
 function CharacterModel({ job, hidden }: { job: Job; hidden: Set<BodyPart> }) {
   const group = useRef<Group>(null);
+  const appearance = resolve(job.appearance);
+  // For long/ponytail hair, hold a slight 3/4 turn so the drape stays visible from the front.
+  const baseTurn =
+    appearance.hairStyle === "long" || appearance.hairStyle === "ponytail" ? -0.35 : 0;
   useFrame((state) => {
     if (!group.current) return;
     const t = state.clock.elapsedTime;
-    group.current.rotation.y = Math.sin(t * 0.5) * 0.3;
+    group.current.rotation.y = baseTurn + Math.sin(t * 0.5) * 0.2;
     group.current.position.y = Math.sin(t * 1.5) * 0.05;
   });
-
-  const appearance = resolve(job.appearance);
   const show = (p: BodyPart) => !hidden.has(p);
   const hatHidden = hidden.has("hat") || job.hatType === "none";
   const hatCovers = !hatHidden && (job.hatType === "chef" || job.hatType === "hardhat");
