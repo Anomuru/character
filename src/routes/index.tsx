@@ -276,22 +276,15 @@ function Index() {
               }}
               onClick={() => pickJob(rawJob)}
             >
-              {/* status pill in the corner — stars earned or "Yangi" */}
-              <div
-                className="absolute right-3 top-3 z-10 flex items-center gap-1 rounded-full bg-white/90 px-2 py-1 shadow-sm transition-transform group-hover:scale-105"
-                title={completed ? `${stars}/3 yulduz` : "Hali o'ynalmagan"}
-              >
-                {completed ? (
+              {/* status pill in the corner — stars earned (hidden until played) */}
+              {completed && (
+                <div
+                  className="absolute right-3 top-3 z-10 flex items-center gap-1 rounded-full bg-white/90 px-2 py-1 shadow-sm transition-transform group-hover:scale-105"
+                  title={`${stars}/3 yulduz`}
+                >
                   <StarRow filled={stars} total={3} size={14} color={tint.ring} />
-                ) : (
-                  <span
-                    className="px-1 text-[11px] font-bold uppercase tracking-wide"
-                    style={{ color: tint.text }}
-                  >
-                    Yangi
-                  </span>
-                )}
-              </div>
+                </div>
+              )}
 
               <div className="relative overflow-hidden">
                 {j.imageUrl ? (
